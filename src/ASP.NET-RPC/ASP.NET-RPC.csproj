@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <PackageId>ASP.NET-RPC</PackageId>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Authors>Alexander Oderov</Authors>
+        <Title>ASP.NET RPC library</Title>
+        <Description>ASP.NET RPC library</Description>
+        <ProjectUrl>https://github.com/DistSynth/asp.net-rpc</ProjectUrl>
+        <LicenseUrl>https://github.com/DistSynth/asp.net-rpc/LICENSE.md</LicenseUrl>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv" Version="2.2.0" />
+        <PackageReference Include="prometheus-net.AspNetCore" Version="3.1.0" />
+        <PackageReference Include="prometheus-net.DotNetRuntime" Version="3.0.7-beta" />
+    </ItemGroup>
+
+</Project>

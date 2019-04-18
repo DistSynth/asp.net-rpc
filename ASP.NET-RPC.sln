@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcMid", "RpcMid\RpcMid.csproj", "{5C374EB3-80E6-4A51-A778-B5B687BB3927}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASP.NET-RPC", "src\ASP.NET-RPC\ASP.NET-RPC.csproj", "{5C374EB3-80E6-4A51-A778-B5B687BB3927}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
