@@ -1,7 +1,7 @@
 language: csharp
 solution: ASP.NET-RPC.sln
 mono: none
-dotnet: 2.2.203
+dotnet: 2.2
 script:
 - dotnet build -c Release
 - dotnet test
