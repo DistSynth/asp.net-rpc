@@ -7,11 +7,10 @@ dotnet: 2.2.203
 script:
 - dotnet build -c Release
 - dotnet test
-- dotnet pack -c Release
+- dotnet pack -c Release version $TRAVIS_TAG
 deploy:
   skip_cleanup: true
   provider: script
   script: dotnet nuget push src/ASP.NET-RPC/bin/Release/ASP.NET-RPC.*.nupkg --api-key $NUGET_API_KEY
   on:
     tags: true
-    condition: $TRAVIS_TAG =~ ^(\d+\.)?(\d+\.)?(\*|\d+)$

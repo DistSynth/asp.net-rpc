@@ -47,30 +47,32 @@ namespace RpcMid {
             _logger.LogInformation("Initialize RPC executor...");
 
             foreach (var rpcService in _services) {
-                _logger.LogInformation(rpcService.GetType().Name);
-                _methods[rpcService.GetType().Name] = BuildService(rpcService.GetType());
-                _instances[rpcService.GetType().Name] = rpcService;
+                var svcType = rpcService.GetType();
+                var typeName = svcType.Name;
+                _logger.LogInformation(typeName);
+                _methods[typeName] = BuildService(svcType);
+                _instances[typeName] = rpcService;
             }
         }
 
         private ConcurrentDictionary<string, MethodInvoker> BuildService(Type type) {
-            var _handlers = new ConcurrentDictionary<string, MethodInvoker>();
+            var handlers = new ConcurrentDictionary<string, MethodInvoker>();
             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                .OrderByDescending(t => t.DeclaringType == type);
+                              .OrderByDescending(t => t.DeclaringType == type);
             var interfaces = type.GetInterfaces();
 
-            var serialiser = JsonSerializer.Create();
+            var serializer = JsonSerializer.Create();
 
             var duplicateMethod = methods.GroupBy(t => Tuple.Create(t.Name, t.DeclaringType))
-                .FirstOrDefault(t => t.Count() > 1);
+                                         .FirstOrDefault(t => t.Count() > 1);
             if (duplicateMethod != null) {
                 var methodInfo = duplicateMethod.ToList().First();
                 throw new Exception($"Method with name {methodInfo.Name} already exist in type {type}");
             }
 
             List<IGrouping<string, MethodInfo>> methodInfos = interfaces.SelectMany(
-                    i => i.GetMethods(BindingFlags.Public | BindingFlags.Instance)).ToList()
-                .GroupBy(t => t.Name.ToLower()).ToList();
+                                                                                    i => i.GetMethods(BindingFlags.Public | BindingFlags.Instance)).ToList()
+                                                                        .GroupBy(t => t.Name.ToLower()).ToList();
 
             var duplicateInterfaceMethod = methodInfos.FirstOrDefault(t => t.Count() > 1);
             if (duplicateInterfaceMethod != null) {
@@ -79,26 +81,25 @@ namespace RpcMid {
             }
 
             var interfaceMethodsMap = methodInfos.ToDictionary(t => t.Key,
-                t => t.OrderByDescending(s => s.DeclaringType == type).FirstOrDefault());
+                                                               t => t.OrderByDescending(s => s.DeclaringType == type).FirstOrDefault());
 
             foreach (var method in methods.OrderByDescending(t => t.DeclaringType == type)) {
                 //var attribute = method.GetCustomAttributes(typeof(JRpcMethodAttribute), false).SingleOrDefault() as JRpcMethodAttribute;
                 var methodName = method.Name.ToLower();
 
-                if (_handlers.ContainsKey(methodName) && method.DeclaringType != type) {
+                if (handlers.ContainsKey(methodName) && method.DeclaringType != type) {
                     continue;
                 }
 
-                MethodInfo interfaceMethodInfo = null;
-                interfaceMethodsMap.TryGetValue(methodName, out interfaceMethodInfo);
+                interfaceMethodsMap.TryGetValue(methodName, out var interfaceMethodInfo);
                 var methodInfo = interfaceMethodInfo ?? method;
-                _handlers[methodName] = new MethodInvoker(methodInfo, serialiser);
+                handlers[methodName] = new MethodInvoker(methodInfo, serializer);
             }
 
-            return _handlers;
+            return handlers;
         }
 
-        internal class MethodInvoker {
+        private class MethodInvoker {
 
             private readonly JsonSerializer _jsonSerializer;
             private readonly Func<object, JToken, object> _delegate;
@@ -112,8 +113,8 @@ namespace RpcMid {
                 var jToken = Expression.Parameter(typeof(JToken), "jToken");
 
                 _delegate = Expression
-                    .Lambda<Func<object, JToken, object>>(CreateCall(instance, jToken, methodInfo), instance, jToken)
-                    .Compile();
+                            .Lambda<Func<object, JToken, object>>(CreateCall(instance, jToken, methodInfo), instance, jToken)
+                            .Compile();
             }
 
             public async Task<object> Invoke(object instance, JToken parameters) {
@@ -125,7 +126,8 @@ namespace RpcMid {
                 return res;
             }
 
-            private static T GetArg<T>(JToken j, int i, IReadOnlyList<ParameterInfo> parameters,
+            private static T GetArg<T>(
+                JToken j, int i, IReadOnlyList<ParameterInfo> parameters,
                 JsonSerializer jsonSerializer) {
                 var jObj = j as JObject;
                 JToken value;
@@ -159,10 +161,10 @@ namespace RpcMid {
                 var paramsExpressions = _parameters.Select((p, i) => {
                     var getArgTyped = getArg.MakeGenericMethod(p.ParameterType);
                     return Expression.Call(getArgTyped, jToken, Expression.Constant(i),
-                        Expression.Constant(_parameters), Expression.Constant(_jsonSerializer));
+                                           Expression.Constant(_parameters), Expression.Constant(_jsonSerializer));
                 });
                 var callExpression = Expression.Call(Expression.Convert(instance, methodInfo.ReflectedType), methodInfo,
-                    paramsExpressions);
+                                                     paramsExpressions);
                 if (methodInfo.ReturnType == typeof(void)) {
                     return Expression.Block(callExpression, Expression.Constant(null));
                 }
@@ -252,7 +254,7 @@ namespace RpcMid {
         }
 
         public JRpcException(Exception exception, string moduleInfo, string method, int errorCode) : this(exception,
-            moduleInfo, method) {
+                                                                                                          moduleInfo, method) {
             code = errorCode;
         }
 
