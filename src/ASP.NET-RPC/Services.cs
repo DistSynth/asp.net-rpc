@@ -1,11 +1,7 @@
-using System;
 using System.Threading.Tasks;
+using AspNet.RPC.Core;
 
-namespace RpcMid {
-
-    public interface IRpcService {
-
-    }
+namespace AspNet.RPC {
 
     public class FirstService : IRpcService {
 

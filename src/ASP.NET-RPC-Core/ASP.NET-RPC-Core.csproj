@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <PackageId>ASP.NET-RPC-Core</PackageId>
+        <RootNamespace>AspNet.RPC.Core</RootNamespace>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>ASP.NET RPC Core library</Title>
+        <Authors>Alexander Oderov</Authors>
+        <ProjectUrl>https://github.com/DistSynth/asp.net-rpc</ProjectUrl>
+        <LicenseUrl>https://github.com/DistSynth/asp.net-rpc/LICENSE.md</LicenseUrl>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
+    </ItemGroup>
+</Project>

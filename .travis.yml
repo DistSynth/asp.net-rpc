@@ -4,12 +4,12 @@ mono: none
 sudo: required
 dist: xenial
 dotnet: 2.2.203
+if: tag IS present
 script:
 - dotnet build -c Release
 - dotnet test
-- dotnet pack -c Release -p:PackageVersion=$TRAVIS_TAG
+- dotnet pack -c Release -p:PackageVersion=$TRAVIS_TAG -o nuget
 deploy:
   skip_cleanup: true
   provider: script
-  script: dotnet nuget push src/ASP.NET-RPC/bin/Release/ASP.NET-RPC.*.nupkg --api-key $NUGET_API_KEY
-  if: tag IS present
+  script: dotnet nuget push nuget/*.nupkg --api-key $NUGET_API_KEY

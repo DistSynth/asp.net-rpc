@@ -1,14 +1,12 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RpcMid {
+namespace AspNet.RPC.Middleware {
 
     public class HttpRpcMiddleware {
 

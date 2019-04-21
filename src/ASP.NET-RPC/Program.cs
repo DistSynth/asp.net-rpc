@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Prometheus.DotNetRuntime;
 
-namespace RpcMid {
+namespace AspNet.RPC {
 
     internal static class Program {
 

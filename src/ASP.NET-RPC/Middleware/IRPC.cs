@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace RpcMid {
+namespace AspNet.RPC.Middleware {
 
     public static class IRPC {
 

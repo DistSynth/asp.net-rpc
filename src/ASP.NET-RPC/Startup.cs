@@ -1,9 +1,11 @@
 using System;
+using AspNet.RPC.Core;
+using AspNet.RPC.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
 
-namespace RpcMid {
+namespace AspNet.RPC {
 
     public partial class Startup {
 

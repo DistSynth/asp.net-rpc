@@ -5,13 +5,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using Fasterflect;
-using Microsoft.Extensions.DependencyInjection;
+using AspNet.RPC.Core;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RpcMid {
+namespace AspNet.RPC.Core {
+
+}
+
+namespace AspNet.RPC {
 
     public class RpcExecutor {
 
@@ -30,12 +33,12 @@ namespace RpcMid {
 
         public async Task<object> ProcessRpcRequest(string service, JToken json) {
             _logger.LogInformation("Processing request...");
-            var request = json.ToObject<JRpcRequest>();
+            var request = json.ToObject<RpcRequest>();
             var methodName = request.Method.ToLower();
 
             var inst = _instances[service];
             var method = _methods[service][methodName];
-            var resp = new JRpcResponse {
+            var resp = new RpcResponse {
                 Id = request.Id,
                 Result = await method.Invoke(inst, request.Params as JToken)
             };
@@ -172,114 +175,6 @@ namespace RpcMid {
                 return Expression.Convert(callExpression, typeof(object));
             }
 
-        }
-
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class JRpcRequest {
-
-        [JsonProperty("method")]
-        public string Method { get; set; }
-
-        [JsonProperty("params")]
-        public object Params { get; set; }
-
-        [JsonProperty("id")]
-        public object Id { get; set; }
-
-        [JsonProperty("jsonrpc")]
-        public string Jsonrpc { get; set; } = "2.0";
-
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class JRpcResponse {
-
-        [JsonProperty(PropertyName = "jsonrpc")]
-        public string JsonRpc => "2.0";
-
-        [JsonProperty(PropertyName = "result")]
-        public object Result { get; set; }
-
-        [JsonProperty(PropertyName = "error")]
-        public JRpcException Error { get; set; }
-
-        [JsonProperty(PropertyName = "id")]
-        public object Id { get; set; }
-
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class JRpcResponse<T> {
-
-        [JsonProperty(PropertyName = "jsonrpc")]
-        public string JsonRpc => "2.0";
-
-        [JsonProperty(PropertyName = "result")]
-        public T Result { get; set; }
-
-        [JsonProperty(PropertyName = "error")]
-        public JRpcException Error { get; set; }
-
-        [JsonProperty(PropertyName = "id")]
-        public object Id { get; set; }
-
-    }
-
-    [Serializable]
-    [JsonObject(MemberSerialization.OptIn)]
-    public class JRpcException : ApplicationException {
-
-        private readonly string _stacktrace;
-
-        public JRpcException(string message) {
-            this.message = message;
-        }
-
-        [JsonConstructor]
-        public JRpcException(string message, string stackTrace) {
-            this.message = message;
-            _stacktrace = stackTrace;
-        }
-
-        public JRpcException(Exception exception, string moduleInfo, string method) {
-            var remoteException = exception as JRpcException;
-            message = remoteException != null
-                ? remoteException.message
-                : exception.GetType().Name + ": " + exception.Message;
-            code = remoteException != null ? remoteException.code : exception.HResult;
-            var stackTrace = remoteException != null ? remoteException.stacktrace : exception.StackTrace;
-            _stacktrace = stackTrace + $"\r\n\r\n<---- handled by {moduleInfo}, {method}";
-        }
-
-        public JRpcException(Exception exception, string moduleInfo, string method, int errorCode) : this(exception,
-                                                                                                          moduleInfo, method) {
-            code = errorCode;
-        }
-
-
-        public JRpcException(string message, string moduleInfo, string method) {
-            this.message = message;
-            _stacktrace = $"\r\n\r\n<---- handled by {moduleInfo}, {method}";
-        }
-
-        public JRpcException() {
-        }
-
-
-        [JsonProperty]
-        public string message { get; set; }
-
-        [JsonProperty]
-        public int code { get; set; }
-
-
-        [JsonProperty]
-        public string stacktrace => _stacktrace + StackTrace;
-
-        public override string ToString() {
-            return $"{base.ToString()}, RpcExceptionMessage = {message}, RpcExceptionData = {stacktrace}";
         }
 
     }

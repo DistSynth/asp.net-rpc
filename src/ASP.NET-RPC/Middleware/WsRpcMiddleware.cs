@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RpcMid {
+namespace AspNet.RPC.Middleware {
 
     public class WsRpcMiddleware {
 
