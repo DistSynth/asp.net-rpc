@@ -4,7 +4,6 @@ mono: none
 sudo: required
 dist: xenial
 dotnet: 2.2.203
-if: tag IS present
 script:
 - dotnet build -c Release
 - dotnet test
@@ -15,4 +14,3 @@ deploy:
   script: dotnet nuget push nuget/*.nupkg --api-key $NUGET_API_KEY
   on:
     tags: true
-    all_branches: true
