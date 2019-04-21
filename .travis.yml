@@ -13,3 +13,5 @@ deploy:
   skip_cleanup: true
   provider: script
   script: dotnet nuget push nuget/*.nupkg --api-key $NUGET_API_KEY
+  on:
+    tags: true
