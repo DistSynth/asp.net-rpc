@@ -12,6 +12,4 @@ deploy:
   skip_cleanup: true
   provider: script
   script: dotnet nuget push src/ASP.NET-RPC/bin/Release/ASP.NET-RPC.*.nupkg --api-key $NUGET_API_KEY
-  on:
-    tags: true
-    condition: $TRAVIS_TAG =~ ^(\d+\.)?(\d+\.)?(\*|\d+)$
+  if: tag IS present
